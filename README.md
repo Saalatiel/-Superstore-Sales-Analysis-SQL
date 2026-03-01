@@ -22,6 +22,16 @@ We’re using the **Sample Superstore** dataset (2014–2017), which contains ab
 
 ---
 
+## 🚀 How to Run
+I designed this to be "zero-setup." You don't need to install anything:
+
+1. Download the CSV from the link above.
+2. Go to [sqliteonline.com](https://sqliteonline.com/).
+3. Click **Open File** and upload the CSV. It becomes a table automatically.
+4. Open `queries.sql` from this repo and run the queries one by one.
+
+---
+
 ## 🧠 Business Questions Answered
 
 ### 🗺️ General Performance
@@ -52,4 +62,4 @@ What I used to get the job done:
 * **Advanced:** `WITH (CTEs)` and Window Functions like `LAG()` and `RANK()`.
 
 ---
-*Open to feedback! Feel free to reach out if you have questions about the logic used in the queries.*
+*Open to feedback! Feel free to reach out if you have questions about the logic used in the queries.*uestions about the logic used in the queries.*
