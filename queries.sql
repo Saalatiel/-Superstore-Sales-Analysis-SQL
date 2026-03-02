@@ -1,60 +1,60 @@
 
 -- visão geral
 SELECT
-    COUNT(DISTINCT "Order ID")      AS pedidos,
-    COUNT(DISTINCT "Customer Name") AS clientes,
-    COUNT(DISTINCT "Product Name")  AS produtos,
-    ROUND(SUM(Sales), 2)            AS receita,
-    ROUND(SUM(Profit), 2)           AS lucro,
-    ROUND(SUM(Profit)/SUM(Sales)*100, 1) AS margem_pct
-FROM orders;
+    COUNT(DISTINCT order_id)      AS pedidos,
+    COUNT(DISTINCT customer_name) AS clientes,
+    COUNT(DISTINCT product_name)  AS produtos,
+    ROUND(SUM(sales), 2)          AS receita,
+    ROUND(SUM(profit), 2)         AS lucro,
+    ROUND(SUM(profit) / SUM(sales) * 100, 1) AS margem_pct
+FROM sample_superstoreSampleSuperstore ;
 
 
 -- receita e lucro por regiao
 SELECT
-    Region,
-    COUNT(DISTINCT "Order ID")  AS pedidos,
-    ROUND(SUM(Sales), 2)        AS receita,
-    ROUND(SUM(Profit), 2)       AS lucro,
-    ROUND(SUM(Profit)/SUM(Sales)*100, 1) AS margem_pct
-FROM orders
-GROUP BY Region
+    region                          AS regiao,
+    COUNT(DISTINCT order_id)        AS pedidos,
+    ROUND(SUM(sales), 2)            AS receita,
+    ROUND(SUM(profit), 2)           AS lucro,
+    ROUND(SUM(profit)/SUM(sales)*100, 1) AS margem_pct
+FROM sample_superstoreSampleSuperstore 
+GROUP BY region
 ORDER BY lucro DESC;
 
 
 -- por segmento de cliente
 SELECT
-    Segment,
-    COUNT(DISTINCT "Customer Name") AS clientes,
-    ROUND(SUM(Sales), 2)            AS receita,
-    ROUND(SUM(Profit), 2)           AS lucro,
-    ROUND(AVG(Sales), 2)            AS ticket_medio
-FROM orders
-GROUP BY Segment
+    segment                         AS segmento,
+    COUNT(DISTINCT customer_name)   AS clientes,
+    ROUND(SUM(sales), 2)            AS receita,
+    ROUND(SUM(profit), 2)           AS lucro,
+    ROUND(AVG(sales), 2)            AS ticket_medio
+FROM sample_superstoreSampleSuperstore 
+GROUP BY segment
 ORDER BY lucro DESC;
 
 
 -- categoria e subcategoria
 SELECT
-    Category,
-    "Sub-Category",
-    ROUND(SUM(Sales), 2)    AS receita,
-    ROUND(SUM(Profit), 2)   AS lucro,
-    ROUND(SUM(Profit)/SUM(Sales)*100, 1) AS margem_pct
-FROM orders
-GROUP BY Category, "Sub-Category"
+    category                        AS categoria,
+    sub_category                    AS subcategoria,
+    ROUND(SUM(sales), 2)            AS receita,
+    ROUND(SUM(profit), 2)           AS lucro,
+    ROUND(SUM(profit)/SUM(sales)*100, 1) AS margem_pct
+FROM sample_superstoreSampleSuperstore 
+GROUP BY category, sub_category
 ORDER BY lucro DESC;
 
 
 -- produtos no prejuizo
 SELECT
-    "Product Name",
-    Category,
-    ROUND(SUM(Sales), 2)    AS receita,
-    ROUND(SUM(Profit), 2)   AS lucro
-FROM orders
-GROUP BY "Product Name", Category
-HAVING SUM(Profit) < 0
+    product_name                    AS produto,
+    category                        AS categoria,
+    ROUND(SUM(sales), 2)            AS receita,
+    ROUND(SUM(profit), 2)           AS lucro
+FROM sample_superstoreSampleSuperstore 
+GROUP BY product_name, category
+HAVING SUM(profit) < 0
 ORDER BY lucro ASC
 LIMIT 15;
 
@@ -62,34 +62,33 @@ LIMIT 15;
 -- desconto alto esta destruindo margem?
 SELECT
     CASE
-        WHEN Discount = 0     THEN 'sem desconto'
-        WHEN Discount <= 0.1  THEN 'ate 10%'
-        WHEN Discount <= 0.2  THEN '11-20%'
-        WHEN Discount <= 0.4  THEN '21-40%'
+        WHEN discount = 0     THEN 'sem desconto'
+        WHEN discount <= 0.1  THEN 'ate 10%'
+        WHEN discount <= 0.2  THEN '11-20%'
+        WHEN discount <= 0.4  THEN '21-40%'
         ELSE '40%+'
-    END                         AS desconto,
-    COUNT(*)                    AS pedidos,
-    ROUND(SUM(Sales), 2)        AS receita,
-    ROUND(SUM(Profit), 2)       AS lucro,
-    ROUND(AVG(Profit), 2)       AS lucro_medio
-FROM orders
-GROUP BY desconto
-ORDER BY MIN(Discount);
+    END                         AS faixa_desconto,
+    COUNT(*)                    AS total_vendas,
+    ROUND(SUM(sales), 2)        AS receita,
+    ROUND(SUM(profit), 2)       AS lucro,
+    ROUND(AVG(profit), 2)       AS lucro_medio
+FROM sample_superstoreSampleSuperstore 
+GROUP BY faixa_desconto
+ORDER BY MIN(discount);
 
 
 -- top 10 clientes por receita
 SELECT
-    "Customer Name",
-    Segment,
-    Region,
-    COUNT(DISTINCT "Order ID")  AS pedidos,
-    ROUND(SUM(Sales), 2)        AS receita,
-    ROUND(SUM(Profit), 2)       AS lucro
-FROM orders
-GROUP BY "Customer Name", Segment, Region
+    customer_name                   AS cliente,
+    segment                         AS segmento,
+    region                          AS regiao,
+    COUNT(DISTINCT order_id)        AS pedidos,
+    ROUND(SUM(sales), 2)            AS receita,
+    ROUND(SUM(profit), 2)           AS lucro
+FROM sample_superstoreSampleSuperstore 
+GROUP BY customer_name, segment, region
 ORDER BY receita DESC
 LIMIT 10;
-
 
 -- clientes fieis (mais de 5 pedidos)
 SELECT
